@@ -24,7 +24,7 @@ Our model is the first public work showing how to achieve GPT-4 level long-conte
     - [x] LLaMA-2 7B 80K: continue pretrained on 80K, tested on 128K
     - [x] LLaMA-2 13B 64K: continue pretrained on 64K, tested on 128K
 - [x] Evaluating the pretrained checkpoint on Needle-in-a-HayStack
-- [ ] Loading the preprocessed data
+- [x] Loading the preprocessed data
 - [ ] Processing the long-context data
 - [ ] Continue pretraining the model on processed long-context data
 
@@ -43,13 +43,13 @@ from huggingface_hub import snapshot_download
 import os
 
 snapshot_download(repo_id='yaofu/llama-2-7b-80k',
-                  local_dir='llama-2-7b-80k',
+                  local_dir='../llama-2-7b-80k',
                   repo_type='model',
                   local_dir_use_symlinks=False,
                   resume_download=True)
 
 snapshot_download(repo_id='yaofu/llama-2-13b-64k',
-                  local_dir='llama-2-13b-64k',
+                  local_dir='../llama-2-13b-64k',
                   repo_type='model',
                   local_dir_use_symlinks=False,
                   resume_download=True)
@@ -111,6 +111,8 @@ print("Response:", response.split("\n")[0])
 ```
 
 ## Evaluate the pretrained checkpoint on the Needle-in-a-Haystack test
+The evaluation requires 4*80G A100, and takes about/ less than 24 hours to finish. 
+The inference code can be further optimized by optimizing the tokenizer speed (tokenizing a document of 100K tokens takes a lot of time), though we leave it to future work. 
 ```bash
 cd eval/needle
 mkdir logs img results
@@ -118,14 +120,14 @@ mkdir logs img results
 (
 python -u needle_in_haystack.py --s_len 0 --e_len 128000\
     --model_provider LLaMA\
-    --model_path /ML-A800/models/longchat-7b-v1.5-32k
-) 2>&1  | tee logs/eval_longchat.log
+    --model_path ../../../llama-2-7b-80k
+) 2>&1  | tee logs/eval_llama-2-7b-80k.log
 
 python visualize.py 
 ```
 
 ## Load the preprocessed data 
-The following code requires 60G disk size. We have already tokenized and chunked the data in the following format:
+The following code requires 60G disk size in the `$HF_CACHE` folder. The data is processed from [SlimPajama](https://huggingface.co/datasets/cerebras/SlimPajama-627B) using per-source length-upsampling described in our paper section 3. We have already tokenized and chunked the data in the following format:
 <p align="center" width="100%">
 <a ><img src="assets/chunking.jpg" alt="logo" style="width: 100%; min-width: 300px; display: block; margin: auto;"></a>
 </p>
