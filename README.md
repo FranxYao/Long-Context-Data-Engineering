@@ -1,4 +1,12 @@
-# Long-Context-Data-Engineering
+
+# Long-Context Data Engineering
+
+![](assets/logo.jpg)
+ChatGPT-4 Dalle-3 Prompt: "Draw a carton style logo showing a very very long paper"
+<p align="center">
+    🤗 <a href="https://huggingface.co/yaofu/llama-2-7b-80k" target="_blank">HF Repo</a> • 📃 <a href="https://github.com/FranxYao/Long-Context-Data-Engineering/assets/long_context_data_engineering.pdf" target="_blank">Paper</a>
+</p>
+
 Implementation of paper:
 * Yao Fu, Rameswar Panda, Xinyao Niu, Xiang Yue, Hannaneh Hajishirzi, Yoon Kim and Hao Peng. Feb 2024. _Data Engineering for Scaling Language Models to 128K Context_
 
