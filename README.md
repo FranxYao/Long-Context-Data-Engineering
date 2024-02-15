@@ -7,7 +7,7 @@
 
 ChatGPT-4 Dalle-3 Prompt: "Draw a carton style logo showing a very very long paper"
 <p align="center">
-    🤗 <a href="https://huggingface.co/yaofu/llama-2-7b-80k" target="_blank">HF Repo</a> • 📃 <a href="https://github.com/FranxYao/Long-Context-Data-Engineering/blob/main/assets/long_context_data_engineering.pdf" target="_blank">Paper</a>
+    🤗 <a href="https://huggingface.co/yaofu/llama-2-7b-80k" target="_blank">HF Repo</a> • 📃 <a href="https://github.com/FranxYao/Long-Context-Data-Engineering/blob/main/assets/long_context_data_engineering.pdf" target="_blank">Paper</a> • 💿 <a href="https://huggingface.co/datasets/yaofu/slimpajama-per-source-length-upsample" target="_blank">Data</a>
 </p>
 
 Implementation of paper:
@@ -23,7 +23,7 @@ Our model is the first public work showing how to achieve GPT-4 level long-conte
 - [x] Loading and playing with the following continue pretrained checkpoint:
     - [x] LLaMA-2 7B 80K: continue pretrained on 80K, tested on 128K
     - [x] LLaMA-2 13B 64K: continue pretrained on 64K, tested on 128K
-- [ ] Evaluating the pretrained checkpoint on Needle-in-a-HayStack
+- [x] Evaluating the pretrained checkpoint on Needle-in-a-HayStack
 - [ ] Loading the preprocessed data
 - [ ] Processing the long-context data
 - [ ] Continue pretraining the model on processed long-context data
@@ -122,4 +122,25 @@ python -u needle_in_haystack.py --s_len 0 --e_len 128000\
 ) 2>&1  | tee logs/eval_longchat.log
 
 python visualize.py 
+```
+
+## Load the preprocessed data 
+The following code requires 60G disk size. We have already tokenized and chunked the data
+```python 
+import datasets
+from transformers import AutoTokenizer
+dataset = datasets.load_dataset("yaofu/slimpajama-per-source-length-upsample")
+
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+print(dataset["train"][0].keys())
+print(dataset["train"][0]["source"])
+print(len(dataset["train"][0]["input_ids"])) ## all input_ids are chunks of length 131072
+
+doc_id = 0
+doc_start, doc_end = dataset["train"][0]["source"][doc_id]["start"], dataset["train"][0]["source"][doc_id]["end"]
+print(tokenizer.decode(dataset["train"][0]["input_ids"][doc_start: doc_end]))
+
+doc_id = 1
+doc_start, doc_end = dataset["train"][0]["source"][doc_id]["start"], dataset["train"][0]["source"][doc_id]["end"]
+print(tokenizer.decode(dataset["train"][0]["input_ids"][doc_start: doc_end]))
 ```
