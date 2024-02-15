@@ -2,7 +2,7 @@
 # Long-Context Data Engineering
 
 <p align="center" width="100%">
-<a ><img src="assets/logo.jpg" alt="logo" style="width: 80%; min-width: 300px; display: block; margin: auto;"></a>
+<a ><img src="assets/logo.jpg" alt="logo" style="width: 60%; min-width: 300px; display: block; margin: auto;"></a>
 </p>
 
 ChatGPT-4 Dalle-3 Prompt: "Draw a carton style logo showing a very very long paper"
