@@ -21,10 +21,10 @@ Our model is the first public work showing how to achieve GPT-4 level long-conte
 
 ## Table of Content
 - [x] Loading and playing with the following continue pretrained checkpoint:
-    - [x]  LLaMA-2 7B 80K: continue pretrained on 80K, tested on 128K
-    - [ ] LLaMA-2 13B 64K: continue pretrained on 64K, tested on 128K
-- [ ] Loading the preprocessed data
+    - [x] LLaMA-2 7B 80K: continue pretrained on 80K, tested on 128K
+    - [x] LLaMA-2 13B 64K: continue pretrained on 64K, tested on 128K
 - [ ] Evaluating the pretrained checkpoint on Needle-in-a-HayStack
+- [ ] Loading the preprocessed data
 - [ ] Processing the long-context data
 - [ ] Continue pretraining the model on processed long-context data
 
@@ -34,6 +34,7 @@ Create a folder to download the model.
 ```bash 
 pip install -r requirements.txt # pytorch is not included here because we assume you have already installed pytorch
 mkdir ../llama-2-7b-80k
+mkdir ../llama-2-13b-64k
 ```
 
 Download the continue pretrained checkpoint to local 
@@ -46,13 +47,19 @@ snapshot_download(repo_id='yaofu/llama-2-7b-80k',
                   repo_type='model',
                   local_dir_use_symlinks=False,
                   resume_download=True)
+
+snapshot_download(repo_id='yaofu/llama-2-13b-64k',
+                  local_dir='llama-2-13b-64k',
+                  repo_type='model',
+                  local_dir_use_symlinks=False,
+                  resume_download=True)
 ```
 
 We recommend you download the checkpoint to local first, instead of directly loading from HF, like the following:
 ```python
 from transformers import AutoModelForCausalLM
 # Below is slow and hard to control in a cluster
-# Unless you insist, we recommend you download the model to local first!
+# Unless you insist, **we recommend you download the model to local first**
 model = AutoModelForCausalLM.from_pretrained("yaofu/llama-2-7b-80k", 
                                              use_flash_attention_2="flash_attention_2", 
                                              torch_dtype=torch.bfloat16
@@ -61,7 +68,7 @@ model = AutoModelForCausalLM.from_pretrained("yaofu/llama-2-7b-80k",
 
 ## Load the continue pretrained checkpoint and play with it 
 The following code requries at least 8x4090 to support 80K context. 
-If you have 8x80G A100 you can make it to at least 128K
+If you have 4x80G A100 you can make it to at least 128K
 
 We use `tensor_parallel` implemented from [this repo](https://github.com/BlackSamorez/tensor_parallel) because it is much faster than huggingface's `device_map` and lightweight than vLLM. But it has a small bug that if your GPU memory is not large enough, it will stuck instead of through a memory overflow exception. So make sure you do have enough GPU memory.
 ```python 
@@ -79,9 +86,10 @@ model = tp.tensor_parallel(model, sharded=True)
 
 # Construct the Needle-in-a-HayStack Prompt
 needle = "\nThe best thing to do in San Francisco is eat a sandwich and sit in Dolores Park on a sunny day.\n"
-ctx_len = 80000 # need at least 8*4090 to run this length
+ctx_len = 100000 # need at least 8*4090 to run this length
+depth = 0.5
 context = load_context(fpath="eval/needle/PaulGrahamEssays/*.txt", ctx_len=ctx_len)
-context = insert_needle(context, needle, depth=0.1)
+context = insert_needle(context, needle, depth=depth)
 needle_idx = context.find("The best thing to do in San Francisco is")
 print("Context has %d chars, needle inserted at %d char location:\n" % (len(context), needle_idx))
 print(context[needle_idx - 150: needle_idx + 150]) # look at how the needle is inserted 
@@ -100,4 +108,18 @@ with torch.no_grad():
     output_ids = model.generate(input_ids, max_new_tokens=50)
     response = tokenizer.decode(output_ids[0][input_ids.shape[1]:], skip_special_tokens=True).strip()
 print("Response:", response.split("\n")[0])
+```
+
+## Evaluate the pretrained checkpoint on the Needle-in-a-Haystack test
+```bash
+cd eval/needle
+mkdir logs img results
+
+(
+python -u needle_in_haystack.py --s_len 0 --e_len 128000\
+    --model_provider LLaMA\
+    --model_path /ML-A800/models/longchat-7b-v1.5-32k
+) 2>&1  | tee logs/eval_longchat.log
+
+python visualize.py 
 ```

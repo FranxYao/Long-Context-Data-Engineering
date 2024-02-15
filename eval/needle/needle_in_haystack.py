@@ -1,127 +1,41 @@
 """
 # GPT-4
 (
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
+python -u needle_in_haystack.py --s_len 0 --e_len 128000\
     --model_provider OpenAI\
     --model_name gpt-4-1106-preview
+    --api_key $OPENAI_API_KEY
 ) 2>&1  | tee logs/eval_gpt_4_128k.log
 
-# GPT-3.5
+# LLaMA 2 32K. Remember to download the model first
 (
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 16000\
-    --model_provider OpenAI\
-    --model_name gpt-3.5-turbo-16k
-) 2>&1  | tee logs/eval_gpt_3.5_16k.log
-
-# Claude-2
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider Anthropic\
-    --model_name claude-2
-) 2>&1  | tee logs/eval_claude-2_200k.log
-
-# LLaMA 2 32K 
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
+python -u needle_in_haystack.py --s_len 0 --e_len 128000\
     --model_provider LLaMA\
-    --model_path /ML-A800/models/Llama-2-7B-32K-Instruct
+    --model_path ../../../Llama-2-7B-32K-Instruct
 ) 2>&1  | tee logs/eval_llama2_32k_instruct.log
 
-# LongChat 
+# LongChat. Remember to download the model first
 (
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
+python -u needle_in_haystack.py --s_len 0 --e_len 128000\
     --model_provider LLaMA\
     --model_path /ML-A800/models/longchat-7b-v1.5-32k
 ) 2>&1  | tee logs/eval_longchat.log
 
-
-# LLaMA LongLora 7B 100K -- this requires a conda environment
-conda activate longlora
+# Our llama-2-7b-80k, requires 4*80G A100
+# require you to download the model first
 (
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
+python -u needle_in_haystack.py --s_len 0 --e_len 128000\
     --model_provider LLaMA\
-    --model_path /ML-A800/models/Llama-2-7b-longlora-100k-ft
-) 2>&1  | tee logs/eval_llama_longlora.log
-conda deactivate 
-
-# LLaMA LongLora 13B 32K
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider LLaMA\
-    --model_path /ML-A800/models/Llama-2-13b-longlora-32k-ft
-) 2>&1  | tee logs/eval_llama_longlora_13b_32k.log
-
-# LLaMA LongLora 13B 64K
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider LLaMA\
-    --model_path /ML-A800/models/Llama-2-13b-longlora-64k
-) 2>&1  | tee logs/eval_llama_longlora_13b_64k.log
-
-# ChatGLM 32K -- cannot run because it does not support flash attention
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider GLM\
-    --model_path /ML-A800/models/chatglm2-6b-32k
-) 2>&1  | tee logs/eval_chatglm_32k.log
-
-# YaRN Mistral full attention 
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider Mistral\
-    --model_path /ML-A800/models/Yarn-Mistral-7b-128k\
-    --model_name_suffix full_attn\
-    --flash-attention --custom-model-mistral  \
-    --sliding-window-attention 128000 \
-) 2>&1  | tee logs/eval_yarn_mistral_full_attn.log
-
-# per-source upsampling
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider LLaMA\
-    --model_path /ML-A100/team/research/alex/long_context/outputs/llama2_7b/3.0.1.1_0/checkpoint-2000
-) 2>&1  | tee logs/eval_3.0.1.1_s2000.log
-
-# LLaMA Naive NTK
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider LLaMA\
-    --model_path /ML-A800/models/Llama-2-7b-hf
-) 2>&1  | tee logs/eval_llama_2_7b_ntk_128k.log
-
-# per-source upsampling, 100M tokens 
-(
-python -u LLMNeedleHaystackTester.py --s_len 0 --e_len 128000\
-    --model_provider LLaMA\
-    --model_path /ML-A100/public/run/research/alex/long_context/checkpoints/3.0.1.2_1/checkpoint-20
-) 2>&1  | tee logs/eval_3.0.1.2_s20.log
-
-# 13B model, per-source upsampling, 4B tokens 
-(
-python -u LLMNeedleHaystackTester.py --s_len 120000 --e_len 128000\
-    --model_provider LLaMA\
-    --model_path /ML-A100/team/research/alex/long_context/outputs/llama2_13b/3.1.2.0_0/checkpoint-1000
-) 2>&1  | tee logs/eval_3.1.2.0_s1000.log
+    --model_path ../../../llama-2-7b-80k
+) 2>&1  | tee logs/eval_llama-2-7b-80k.log
 """
-# import sys
-# sys.path.append("../..")
-# sys.path.append("..")
-
-# from llama_config_monkey_patch import replace_llama_config
-# replace_llama_config()
-
-# from yarn_load import load_model_and_apply_patches, add_args
-# from llama_attn_replace import replace_llama_attn
 
 import tiktoken
-import os
-import math 
+import os 
 import glob
 import json
 import tensor_parallel as tp
-from langchain.evaluation import load_evaluator
-from langchain.chat_models import ChatOpenAI
-from transformers import AutoModelForCausalLM, AutoTokenizer,AutoConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from anthropic import Anthropic
 #from dotenv import load_dotenv
 import numpy as np
@@ -131,21 +45,10 @@ import tensor_parallel as tp
 
 scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
 
-#from openai import AsyncOpenAI
 from openai import OpenAI
-# import asyncio
-# from asyncio import Semaphore
 from datetime import datetime, timezone
 import time
 import torch
-import transformers
-
-
-# def reset_rope(model, model_max_train_len, scaling_factor):
-#     for l in model.model.layers:
-#         l.self_attn.rotary_emb.scaling_factor = scaling_factor
-#         l.self_attn.rotary_emb._set_cos_sin_cache(seq_len=model_max_train_len, device="cpu", dtype=torch.float32)
-#     return
 
 class LLMNeedleHaystackTester:
     """
@@ -168,7 +71,7 @@ class LLMNeedleHaystackTester:
                  model_provider = "OpenAI",
                  openai_api_key=None,
                  anthropic_api_key = None,
-                 model_name='/ML-A800/models/Yi-6b-Chat',
+                 model_name='',
                  model_name_suffix=None,
                  num_concurrent_requests = 1,
                  save_results = True,
@@ -218,7 +121,7 @@ class LLMNeedleHaystackTester:
         self.testing_results = []
 
         if("/" in model_name):
-            self.model_version = model_name.split("/")[-2] + "_" + model_name.split("/")[-1]
+            self.model_version = model_name.split("/")[-1]
         else: self.model_version = model_name
         if(model_name_suffix is not None): self.model_version += "_" + model_name_suffix
 
@@ -247,47 +150,17 @@ class LLMNeedleHaystackTester:
         self.model_name = model_name
 
         if(self.model_provider not in ["OpenAI", "Anthropic"]):
-            if(self.model_provider == "GLM"):
-                self.enc = AutoTokenizer.from_pretrained(model_name, use_fast=True, trust_remote_code=True)
-            # elif(self.model_provider == "LLaMA"):
-            #     self.enc = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
-            else:
-                self.enc = AutoTokenizer.from_pretrained(model_name)
-
+            self.enc = AutoTokenizer.from_pretrained(model_name)
             print("loading from %s" % model_name)
-            if(model_provider == "GLM"):
-                self.model_to_test = AutoModelForCausalLM.from_pretrained(model_name,
-                                                                    torch_dtype=torch.bfloat16,
-                                                                    trust_remote_code=True
-                                                                    ).eval()
-            elif("longlora" in model_name):
-                replace_llama_attn(inference=True)
-                config = transformers.AutoConfig.from_pretrained(
-                        model_name
-                    )
-                scaling_factor = float(math.ceil(context_lengths_max / 4096))
-                config.rope_scaling = {"type": "linear", "factor": scaling_factor}
-                self.model_to_test = AutoModelForCausalLM.from_pretrained(
-                        model_name,
-                        config=config,
-                        torch_dtype=torch.float16,
-                    ).eval()
-                self.model_to_test.resize_token_embeddings(32001)
-            elif("Yarn" in model_name):
-                self.model_to_test = load_model_and_apply_patches(model_name, args)
-            else:
-                self.model_to_test = AutoModelForCausalLM.from_pretrained(model_name,
-                                                                    use_flash_attention_2="flash_attention_2", 
-                                                                    torch_dtype=torch.bfloat16,
-                                                                    ).eval()
 
-            if(model_provider == "LLaMA" and "longlora" not in model_name):
-                scaling_factor = 10 # hardcode
-                reset_rope(self.model_to_test, model_max_train_len=81920, scaling_factor=scaling_factor)
+            self.model_to_test = AutoModelForCausalLM.from_pretrained(model_name,
+                                                                use_flash_attention_2="flash_attention_2", 
+                                                                torch_dtype=torch.bfloat16,
+                                                                ).eval()
 
             self.model_to_test = tp.tensor_parallel(self.model_to_test, sharded=True)
         else: 
-            self.model_to_test = OpenAI(base_url="", api_key="")
+            self.model_to_test = OpenAI(api_key=openai_api_key)
             if(self.model_provider == "OpenAI"):
                 self.enc = tiktoken.encoding_for_model(self.model_name)
             elif(self.model_provider == "Anthropic"):
@@ -354,8 +227,6 @@ class LLMNeedleHaystackTester:
                 return
             else:
                 print("result does not exist, testing")
-
-        # import ipdb; ipdb.set_trace()
 
         # Go generate the required length context and place your needle statement in
         context = self.generate_context(context_length, depth_percent)
@@ -522,38 +393,6 @@ class LLMNeedleHaystackTester:
         new_context = self.decode_tokens(tokens_new_context)
         return new_context
 
-    def evaluate_response(self, response):
-        accuracy_criteria = {
-            "accuracy": """
-            Score 1: The answer is completely unrelated to the reference.
-            Score 3: The answer has minor relevance but does not align with the reference.
-            Score 5: The answer has moderate relevance but contains inaccuracies.
-            Score 7: The answer aligns with the reference but has minor omissions.
-            Score 10: The answer is completely accurate and aligns perfectly with the reference.
-            Only respond with a numberical score
-            """
-        }
-
-        # Using GPT-4 to evaluate
-        evaluator = load_evaluator(
-            "labeled_score_string",
-            criteria=accuracy_criteria,
-            llm=self.evaluation_model,
-        )
-
-        eval_result = evaluator.evaluate_strings(
-            # The models response
-            prediction=response,
-
-            # The actual answer
-            reference=self.needle,
-
-            # The question asked
-            input=self.retrieval_question,
-        )
-
-        return int(eval_result['score'])
-
     def get_context_length_in_tokens(self, context):
         if self.model_provider in ["OpenAI", "LLaMA", "Mistral", "GLM"]:
             return len(self.enc.encode(context))
@@ -627,7 +466,8 @@ if __name__ == "__main__":
     parser.add_argument('--model_name', type=str, default=None, help='name of model')
     parser.add_argument('--model_name_suffix', type=str, default=None, help='name of model')
     parser.add_argument('--model_provider', type=str, default="LLaMA", help='which model to use')
-    parser = add_args(parser)
+    parser.add_argument('--api_key', type=str, default="", help='OpenAI API Key')
+    # parser = add_args(parser)
     args = parser.parse_args()
 
     if(args.model_path is not None):
@@ -642,6 +482,7 @@ if __name__ == "__main__":
                                  model_provider=args.model_provider,
                                  save_contexts=True,
                                  save_results=True,
+                                 openai_api_key=args.api_key
                                  )
 
     ht.start_test(args)
