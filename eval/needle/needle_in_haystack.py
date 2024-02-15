@@ -1,4 +1,7 @@
 """
+This script is adapted from 
+https://github.com/gkamradt/LLMTest_NeedleInAHaystack
+
 # GPT-4
 (
 python -u needle_in_haystack.py --s_len 0 --e_len 128000\
