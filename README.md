@@ -1,7 +1,10 @@
 
 # Long-Context Data Engineering
 
-![](assets/logo.jpg)
+<p align="center" width="100%">
+<a ><img src="assets/logo.jpg" alt="logo" style="width: 80%; min-width: 300px; display: block; margin: auto;"></a>
+</p>
+
 ChatGPT-4 Dalle-3 Prompt: "Draw a carton style logo showing a very very long paper"
 <p align="center">
     🤗 <a href="https://huggingface.co/yaofu/llama-2-7b-80k" target="_blank">HF Repo</a> • 📃 <a href="https://github.com/FranxYao/Long-Context-Data-Engineering/assets/long_context_data_engineering.pdf" target="_blank">Paper</a>
