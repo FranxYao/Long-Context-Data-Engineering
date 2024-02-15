@@ -1,0 +1,3 @@
+transformers==4.35.2
+tensor_parallel==2.0.0
+flash-attn==2.3.6
