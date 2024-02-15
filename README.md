@@ -19,7 +19,7 @@ Implementation of paper:
 Our model is the first public showing how to achieve GPT-4 level long-context retrieval performance. 
 
 
-We provide the script for
+## Table of Content
 - [x] Loading and playing with the following continue pretrained checkpoint:
     - [x]  LLaMA-2 7B 80K: continue pretrained on 80K, tested on 128K
     - [ ] LLaMA-2 13B 64K: continue pretrained on 64K, tested on 128K
