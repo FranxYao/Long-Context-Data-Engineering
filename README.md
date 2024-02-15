@@ -13,6 +13,12 @@ ChatGPT-4 Dalle-3 Prompt: "Draw a carton style logo showing a very very long pap
 Implementation of paper:
 * Yao Fu, Rameswar Panda, Xinyao Niu, Xiang Yue, Hannaneh Hajishirzi, Yoon Kim and Hao Peng. Feb 2024. _Data Engineering for Scaling Language Models to 128K Context_
 
+<p align="center" width="100%">
+<a ><img src="assets/needle.jpg" alt="logo" style="width: 100%; min-width: 300px; display: block; margin: auto;"></a>
+</p>
+Our model is the first public showing how to achieve GPT-4 level long-context retrieval performance. 
+
+
 We provide the script for
 - [x] Loading and playing with the following continue pretrained checkpoint:
     - [x]  LLaMA-2 7B 80K: continue pretrained on 80K, tested on 128K
@@ -21,6 +27,7 @@ We provide the script for
 - [ ] Evaluating the pretrained checkpoint on Needle-in-a-HayStack
 - [ ] Processing the long-context data
 - [ ] Continue pretraining the model on processed long-context data
+
 
 ## Download the model to local 
 Create a folder to download the model. 
