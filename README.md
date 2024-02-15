@@ -125,7 +125,11 @@ python visualize.py
 ```
 
 ## Load the preprocessed data 
-The following code requires 60G disk size. We have already tokenized and chunked the data
+The following code requires 60G disk size. We have already tokenized and chunked the data in the following format:
+<p align="center" width="100%">
+<a ><img src="assets/chunking.jpg" alt="logo" style="width: 100%; min-width: 300px; display: block; margin: auto;"></a>
+</p>
+
 ```python 
 import datasets
 from transformers import AutoTokenizer
