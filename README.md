@@ -16,7 +16,7 @@ Implementation of paper:
 <p align="center" width="100%">
 <a ><img src="assets/needle.jpg" alt="logo" style="width: 100%; min-width: 300px; display: block; margin: auto;"></a>
 </p>
-Our model is the first public showing how to achieve GPT-4 level long-context retrieval performance. 
+Our model is the first public work showing how to achieve GPT-4 level long-context retrieval performance. 
 
 
 ## Table of Content
