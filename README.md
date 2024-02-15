@@ -135,18 +135,20 @@ The following code requires 60G disk size in the `$HF_CACHE` folder. The data is
 ```python 
 import datasets
 from transformers import AutoTokenizer
-dataset = datasets.load_dataset("yaofu/slimpajama-per-source-length-upsample")
-
+dataset = datasets.load_dataset("yaofu/slimpajama-per-source-length-upsample", streaming=True)
+it = iter(dataset["train"])
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
-print(dataset["train"][0].keys())
-print(dataset["train"][0]["source"])
-print(len(dataset["train"][0]["input_ids"])) ## all input_ids are chunks of length 131072
+
+d = next(it)
+print(d.keys())
+print(d["source"])
+print(len(d["input_ids"])) ## all input_ids are chunks of length 131072
 
 doc_id = 0
-doc_start, doc_end = dataset["train"][0]["source"][doc_id]["start"], dataset["train"][0]["source"][doc_id]["end"]
-print(tokenizer.decode(dataset["train"][0]["input_ids"][doc_start: doc_end]))
+doc_start, doc_end = d["source"][doc_id]["start"], d["source"][doc_id]["end"]
+print(tokenizer.decode(d["input_ids"][doc_start: doc_end]))
 
 doc_id = 1
-doc_start, doc_end = dataset["train"][0]["source"][doc_id]["start"], dataset["train"][0]["source"][doc_id]["end"]
-print(tokenizer.decode(dataset["train"][0]["input_ids"][doc_start: doc_end]))
+doc_start, doc_end = d["source"][doc_id]["start"], d["source"][doc_id]["end"]
+print(tokenizer.decode(d["input_ids"][doc_start: doc_end]))
 ```
