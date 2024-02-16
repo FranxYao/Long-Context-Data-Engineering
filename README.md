@@ -7,7 +7,7 @@
 
 ChatGPT-4 Dalle-3 Prompt: "Draw a carton style logo showing a very very long paper"
 <p align="center">
-    🤗 <a href="https://huggingface.co/yaofu/llama-2-7b-80k" target="_blank">HF Repo</a> • 📃 <a href="https://github.com/FranxYao/Long-Context-Data-Engineering/blob/main/assets/long_context_data_engineering.pdf" target="_blank">Paper</a> • 💿 <a href="https://huggingface.co/datasets/yaofu/slimpajama-per-source-length-upsample" target="_blank">Data</a>
+    🤗 <a href="https://huggingface.co/yaofu/llama-2-7b-80k" target="_blank">HF Repo</a> • 📃 <a href="https://arxiv.org/abs/2402.10171" target="_blank">Paper</a> • 💿 <a href="https://huggingface.co/datasets/yaofu/slimpajama-per-source-length-upsample" target="_blank">Data</a>
 </p>
 
 Implementation of paper:
