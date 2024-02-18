@@ -67,7 +67,7 @@ model = AutoModelForCausalLM.from_pretrained("yaofu/llama-2-7b-80k",
 ```
 
 ## Load the continue pretrained checkpoint and play with it 
-The following code requries at least 8x4090 to support 80K context. 
+The following code requires at least 8x4090 to support 80K context. 
 If you have 4x80G A100 you can make it to at least 128K
 
 We use `tensor_parallel` implemented from [this repo](https://github.com/BlackSamorez/tensor_parallel) because it is much faster than huggingface's `device_map` and lightweight than vLLM. But it has a small bug that if your GPU memory is not large enough, it will stuck instead of through a memory overflow exception. So make sure you do have enough GPU memory.
