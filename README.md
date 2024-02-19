@@ -40,7 +40,6 @@ mkdir ../llama-2-13b-64k
 Download the continue pretrained checkpoint to local 
 ```python 
 from huggingface_hub import snapshot_download
-import os
 
 snapshot_download(repo_id='yaofu/llama-2-7b-80k',
                   local_dir='../llama-2-7b-80k',
@@ -174,3 +173,47 @@ doc_id = 1
 doc_start, doc_end = d["source"][doc_id]["start"], d["source"][doc_id]["end"]
 print(tokenizer.decode(d["input_ids"][doc_start: doc_end]))
 ```
+
+## Generate the per-source length upsampled data
+We recommend first download the SlimPajama data to local. First make a folder 
+```bash
+mkdir ../SlimPajama-627B
+```
+.
+Then download. This requires about 1.8T disk size and takes quite a while to download. Remember that this is not finetuning, so be patient. 
+```python
+from huggingface_hub import snapshot_download
+
+snapshot_download(repo_id='SlimPajama-627B',
+                  local_dir='../SlimPajama-627B',
+                  repo_type='dataset',
+                  local_dir_use_symlinks=False,
+                  resume_download=True)
+```
+
+Then generate the per-source length upsampled data. In our practice we down-sample sequences shorter than 4K. 
+Note that this is equivalent to upsampling sequences longer than 4K. 
+We use multi-processing: there are 200 tokenizer process, a read process (which is also the main process) and a write process. 
+The main process read the data streamingly, then asks which tokenizer process is free. 
+If there is a free tokenizer process, it assigns the current document to that process, otherwise it waits and keeps asking. 
+A tokenizer process receives the document from the main process, tokenize it, then send the tokens to the writer process. 
+The writer process continuously received the tokenized data from all tokenizer processes, and write them into a .jsonl file. 
+The following code requries about 200 CPU cores, 50G CPU memory. Tokenizing 5B tokens takes about 1 hour. 
+If you do not use multi-processing like we do, you will need about two days for tokenization. 
+```bash
+mkdir logs
+mkdir data
+mkdir data/slimpajama
+mkdir data/slimpajama/per_source_downsample
+cd data_engineering
+
+PATH_TO_SLIMPAJAMA=../SlimPajama-627B # or set it to anywhere else to your convenient
+nohup python -u slimpajama_packing.py\
+    --dataset_size=100m\
+    --print_interval=100 --num_process=200\
+    --dataset_path=$PATH_TO_SLIMPAJAMA\
+    --output_path=../data/slimpajama/per_source_downsample/ --down_sample_ratio=0.1 --down_sample_mode=per_source\
+    > ../logs/slimpajama_packing_dist_per_source_downsample_0.1.log 2>&1 &
+tail -f ../logs/slimpajama_packing_dist_per_source_downsample_0.1.log
+```
+The `--dataset_size 100m` is for a quick demo. Change it to `--dataset_size 5B` to reproduce our training data.
