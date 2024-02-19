@@ -25,7 +25,7 @@ Our model is the first public work showing how to achieve GPT-4 level long-conte
     - [x] LLaMA-2 13B 64K: continue pretrained on 64K, tested on 128K
 - [x] Evaluating the pretrained checkpoint on Needle-in-a-HayStack
 - [x] Loading the preprocessed data
-- [ ] Processing the long-context data
+- [x] Processing the long-context data
 - [ ] Continue pretraining the model on processed long-context data
 
 
@@ -179,12 +179,12 @@ We recommend first download the SlimPajama data to local. First make a folder
 ```bash
 mkdir ../SlimPajama-627B
 ```
-.
+
 Then download. This requires about 1.8T disk size and takes quite a while to download. Remember that this is not finetuning, so be patient. 
 ```python
 from huggingface_hub import snapshot_download
 
-snapshot_download(repo_id='SlimPajama-627B',
+snapshot_download(repo_id='cerebras/SlimPajama-627B',
                   local_dir='../SlimPajama-627B',
                   repo_type='dataset',
                   local_dir_use_symlinks=False,
@@ -194,10 +194,10 @@ snapshot_download(repo_id='SlimPajama-627B',
 Then generate the per-source length upsampled data. In our practice we down-sample sequences shorter than 4K. 
 Note that this is equivalent to upsampling sequences longer than 4K. 
 We use multi-processing: there are 200 tokenizer process, a read process (which is also the main process) and a write process. 
-The main process read the data streamingly, then asks which tokenizer process is free. 
+The main process reads the data streamingly, then asks which tokenizer process is free. 
 If there is a free tokenizer process, it assigns the current document to that process, otherwise it waits and keeps asking. 
-A tokenizer process receives the document from the main process, tokenize it, then send the tokens to the writer process. 
-The writer process continuously received the tokenized data from all tokenizer processes, and write them into a .jsonl file. 
+A tokenizer process receives the document from the main process, tokenizes it, then sends the tokens to the writer process. 
+The writer process continuously receives the tokenized data from all tokenizer processes, and writes them into a .jsonl file. 
 The following code requries about 200 CPU cores, 50G CPU memory. Tokenizing 5B tokens takes about 1 hour. 
 If you do not use multi-processing like we do, you will need about two days for tokenization. 
 ```bash
