@@ -27,7 +27,11 @@ python -u needle_in_haystack.py --s_len 0 --e_len 128000\
 # Our llama-2-7b-80k, requires 4*80G A100
 # require you to download the model first
 (
+<<<<<<< HEAD
 python -u needle_in_haystack.py --s_len 4000 --e_len 128000\
+=======
+python -u needle_in_haystack.py --s_len 0 --e_len 128000\
+>>>>>>> 52aca77a88c692ed5c0a52a98f06503e2a9b0be7
     --model_provider LLaMA\
     --model_path ../../../llama-2-7b-80k
 ) 2>&1  | tee logs/eval_llama-2-7b-80k.log
@@ -53,12 +57,15 @@ from datetime import datetime, timezone
 import time
 import torch
 
+<<<<<<< HEAD
 def reset_rope(model, model_max_train_len, scaling_factor):
     for l in model.model.layers:
         l.self_attn.rotary_emb.scaling_factor = scaling_factor
         l.self_attn.rotary_emb._set_cos_sin_cache(seq_len=model_max_train_len, device="cpu", dtype=torch.float32)
     return
 
+=======
+>>>>>>> 52aca77a88c692ed5c0a52a98f06503e2a9b0be7
 class LLMNeedleHaystackTester:
     """
     This class is used to test the LLM Needle Haystack.
@@ -167,8 +174,11 @@ class LLMNeedleHaystackTester:
                                                                 torch_dtype=torch.bfloat16,
                                                                 ).eval()
 
+<<<<<<< HEAD
             scaling_factor = 10 # hardcode
             reset_rope(self.model_to_test, model_max_train_len=81920, scaling_factor=scaling_factor)
+=======
+>>>>>>> 52aca77a88c692ed5c0a52a98f06503e2a9b0be7
             self.model_to_test = tp.tensor_parallel(self.model_to_test, sharded=True)
         else: 
             self.model_to_test = OpenAI(api_key=openai_api_key)
@@ -176,7 +186,10 @@ class LLMNeedleHaystackTester:
                 self.enc = tiktoken.encoding_for_model(self.model_name)
             elif(self.model_provider == "Anthropic"):
                 self.enc = Anthropic().get_tokenizer()
+<<<<<<< HEAD
         
+=======
+>>>>>>> 52aca77a88c692ed5c0a52a98f06503e2a9b0be7
 
         self.model_to_test_description = model_name
         

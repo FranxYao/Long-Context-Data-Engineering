@@ -150,7 +150,6 @@ Caveat: there are two versions of longbook_qa_eng
 * Recently the author updated the data at [this commit](https://huggingface.co/datasets/xinrongzhang2022/InfiniteBench/commit/f2fd8f04ea3af8304b88de2c58bd33887bcccdb8). Consequently if you download Infinibench from HF directly you will be use different data than we use.
 * Here we upload the version we used for the paper under our `data` folder. This will incease the risk of this dataset being exposed to future LLM training. Hope by that time we already have a better long context eval :) 
 
-
 ## Load the preprocessed data 
 The following code requires 60G disk size in the `$HF_CACHE` folder. The data is processed from [SlimPajama](https://huggingface.co/datasets/cerebras/SlimPajama-627B) using per-source length-upsampling described in our paper section 3. We have already tokenized and chunked the data in the following format:
 <p align="center" width="100%">
