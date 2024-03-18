@@ -77,10 +77,17 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from eval.needle.utils import load_context, insert_needle
 
 # This is the continue pretrained LLaMA 2 7B model with modified rope
+def reset_rope(model, model_max_train_len, scaling_factor):
+    for l in model.model.layers:
+        l.self_attn.rotary_emb.scaling_factor = scaling_factor
+        l.self_attn.rotary_emb._set_cos_sin_cache(seq_len=model_max_train_len, device="cpu", dtype=torch.float32)
+    return
 model = AutoModelForCausalLM.from_pretrained("../llama-2-7b-80k",
                                              use_flash_attention_2="flash_attention_2", 
                                              torch_dtype=torch.bfloat16
                                              ) # requires about 14G disk size in $HF_HOME
+scaling_factor = 10 # hardcode here
+reset_rope(model, model_max_train_len=81920, scaling_factor=scaling_factor)
 model = tp.tensor_parallel(model, sharded=True)
 
 # Construct the Needle-in-a-HayStack Prompt
@@ -124,6 +131,25 @@ python -u needle_in_haystack.py --s_len 0 --e_len 128000\
 
 python visualize.py 
 ```
+
+## Evaluate the pretrained checkpoint on the BookQA dataset from InfiniBench
+Code and data adapted from [InfiniBench](https://github.com/OpenBMB/InfiniteBench/tree/main) original author
+```bash
+cd eval/book
+(
+python -u eval_book.py --task longbook_qa_eng\
+    --verbose\
+    --model_path ../../../llama-2-7b-80k\
+    --data_dir data\
+    --model_name llama\
+    --truncate 128000
+) 2>&1  | tee logs/eval_llama_7b_80k_test_to_128k.log
+```
+Caveat: there are two versions of longbook_qa_eng
+* The original version was uploaded by the InfiniBench author at [this commit](https://huggingface.co/datasets/xinrongzhang2022/InfiniteBench/commit/c583fe67832c26f6094515dbe6c3c26c28d840ee)
+* Recently the author updated the data at [this commit](https://huggingface.co/datasets/xinrongzhang2022/InfiniteBench/commit/f2fd8f04ea3af8304b88de2c58bd33887bcccdb8). Consequently if you download Infinibench from HF directly you will be use different data than we use.
+* Here we upload the version we used for the paper under our `data` folder. This will incease the risk of this dataset being exposed to future LLM training. Hope by that time we already have a better long context eval :) 
+
 
 ## Load the preprocessed data 
 The following code requires 60G disk size in the `$HF_CACHE` folder. The data is processed from [SlimPajama](https://huggingface.co/datasets/cerebras/SlimPajama-627B) using per-source length-upsampling described in our paper section 3. We have already tokenized and chunked the data in the following format:
