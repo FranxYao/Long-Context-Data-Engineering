@@ -134,8 +134,14 @@ python visualize.py
 
 ## Evaluate the pretrained checkpoint on the BookQA dataset from InfiniBench
 Code and data adapted from [InfiniBench](https://github.com/OpenBMB/InfiniteBench/tree/main) original author
+
 ```bash
 cd eval/book
+mkdir data
+```
+Then download `longbook_qa_eng.json` from [here](https://drive.google.com/drive/folders/1IkfRudRr180CbqOpa5PtSHYW4__XGUpH?usp=sharing) and put it under the `data` folder. 
+
+```bash
 (
 python -u eval_book.py --task longbook_qa_eng\
     --verbose\
