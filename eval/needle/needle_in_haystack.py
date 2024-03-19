@@ -27,11 +27,7 @@ python -u needle_in_haystack.py --s_len 0 --e_len 128000\
 # Our llama-2-7b-80k, requires 4*80G A100
 # require you to download the model first
 (
-<<<<<<< HEAD
-python -u needle_in_haystack.py --s_len 4000 --e_len 128000\
-=======
 python -u needle_in_haystack.py --s_len 0 --e_len 128000\
->>>>>>> 52aca77a88c692ed5c0a52a98f06503e2a9b0be7
     --model_provider LLaMA\
     --model_path ../../../llama-2-7b-80k
 ) 2>&1  | tee logs/eval_llama-2-7b-80k.log
